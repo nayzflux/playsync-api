@@ -1,0 +1,95 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id String @id @default(cuid())
+
+  name     String
+  username String @unique
+  email    String @unique
+
+  password String
+
+  guilds   Guild[]
+  members  Member[]
+  messages Message[]
+}
+
+model Guild {
+  id String @id @default(cuid())
+
+  name String
+
+  members Member[]
+  users   User[]
+
+  channels Channel[]
+}
+
+model Member {
+  userId String @id
+  user   User   @relation(fields: [userId], references: [id])
+
+  isOwner Boolean    @default(false)
+  role    MemberRole @default(GUEST)
+
+  guildId String
+  guild   Guild  @relation(fields: [guildId], references: [id])
+
+  messages Message[]
+
+  joinedAt DateTime @default(now())
+
+  @@unique([guildId, userId])
+}
+
+enum MemberRole {
+  ADMIN
+  MODERATOR
+  GUEST
+}
+
+model Channel {
+  id String @id @default(cuid())
+
+  type ChannelType
+
+  messages Message[]
+
+  guild   Guild  @relation(fields: [guildId], references: [id])
+  guildId String
+}
+
+enum ChannelType {
+  GUILD_TEXT
+  GUILD_VOICE
+}
+
+model Message {
+  id String @id @default(cuid())
+
+  channel   Channel @relation(fields: [channelId], references: [id])
+  channelId String
+
+  author   User   @relation(fields: [authorId], references: [id])
+  authorId String
+
+  member   Member @relation(fields: [memberId], references: [userId])
+  memberId String
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
+}
