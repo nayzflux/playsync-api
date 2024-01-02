@@ -33,10 +33,11 @@ model Guild {
   users   User[]
 
   channels Channel[]
+  Message  Message[]
 }
 
 model Member {
-  userId String @id
+  userId String
   user   User   @relation(fields: [userId], references: [id])
 
   isOwner Boolean    @default(false)
@@ -61,6 +62,7 @@ enum MemberRole {
 model Channel {
   id String @id @default(cuid())
 
+  name String
   type ChannelType
 
   messages Message[]
@@ -77,14 +79,18 @@ enum ChannelType {
 model Message {
   id String @id @default(cuid())
 
+  content String
+
   channel   Channel @relation(fields: [channelId], references: [id])
   channelId String
 
   author   User   @relation(fields: [authorId], references: [id])
   authorId String
 
-  member   Member @relation(fields: [memberId], references: [userId])
-  memberId String
+  guild   Guild  @relation(fields: [guildId], references: [id])
+  guildId String
+
+  member Member @relation(fields: [guildId, authorId], references: [guildId, userId])
 }
 
 model Session {

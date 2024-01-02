@@ -7,12 +7,12 @@ import { getCurrentUser } from "../controllers/userController";
 
 const router = Router();
 
-router.get("/me", authenticate, getCurrentUser);
+router.get("/me", getCurrentUser);
 
-router.get("/:userId", authenticate, isSelf, getCurrentUser);
+router.get("/:userId", isSelf, getCurrentUser);
 
-router.patch("/:userId", authenticate, isSelf, getCurrentUser);
+router.patch("/:userId", isSelf, getCurrentUser);
 
-router.delete("/:userId", authenticate, isSelf, getCurrentUser);
+router.delete("/:userId", isSelf, getCurrentUser);
 
 export default router;

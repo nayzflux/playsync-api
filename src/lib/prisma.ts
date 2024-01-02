@@ -35,6 +35,34 @@ export const OTHER_USER_SELECT = {
   username: true,
 };
 
-export const CHANNEL_SELECT = {};
+export const MEMBER_SELECT = {
+  include: {
+    user: {
+      select: OTHER_USER_SELECT,
+    },
+  },
+};
 
-export const GUILD_SELECT = {};
+export const MESSAGE_SELECT = {
+  id: true,
+  content: true,
+  channel: true,
+  author: {
+    select: OTHER_USER_SELECT,
+  },
+  member: MEMBER_SELECT,
+};
+
+export const CHANNEL_SELECT = {
+  id: true,
+  name: true,
+  type: true,
+  messages: { select: MESSAGE_SELECT },
+};
+
+export const GUILD_SELECT = {
+  id: true,
+  name: true,
+  channels: { select: CHANNEL_SELECT },
+  members: MEMBER_SELECT,
+};
